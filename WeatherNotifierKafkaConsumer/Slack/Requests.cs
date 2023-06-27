@@ -1,6 +1,5 @@
 ﻿using RestSharp;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace WeatherNotifierKafkaConsumer.Slack
 {

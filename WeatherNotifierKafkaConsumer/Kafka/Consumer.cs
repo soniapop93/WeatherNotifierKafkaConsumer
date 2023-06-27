@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using WeatherNotifierKafkaConsumer.Slack;
 
 namespace WeatherNotifierKafkaConsumer.Kafka
 {
@@ -13,10 +14,14 @@ namespace WeatherNotifierKafkaConsumer.Kafka
         private IConsumer<Null, string> consumer;
         private readonly List<string> topicNames = new List<string>() { "test" };
         CancellationToken cancellationToken = new CancellationToken();
+        AuthDetails authDetails;
+        Requests slackRequests;
 
         public Consumer()
         {
             consumer = new ConsumerBuilder<Null, string>(config).Build();
+            authDetails = new AuthDetails();
+            slackRequests = new Requests(authDetails);
         }
 
         public void getMessages()
@@ -26,8 +31,8 @@ namespace WeatherNotifierKafkaConsumer.Kafka
             while (true)
             {
                 ConsumeResult<Null, string> consumeResult = consumer.Consume(cancellationToken);
-
-                //todo: implement the part that handles the result
+                Notification notification = new Notification(consumeResult.Message.Value.ToString());
+                slackRequests.sendNotification(notification);
             }
         }
     }
