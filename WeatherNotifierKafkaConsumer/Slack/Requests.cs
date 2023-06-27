@@ -1,24 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RestSharp;
+﻿using RestSharp;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace WeatherNotifierKafkaConsumer.Slack
 {
     public class Requests
     {
-        private Notification notification;
+        private AuthDetails authDetails;
 
-        public Requests(Notification notification)
+        public Requests(AuthDetails authDetails)
         {
-            this.notification = notification;
+            this.authDetails = authDetails;
         }
 
-        public void sendNotification()
-        {
 
+        public void sendNotification(Notification notification)
+        {
+            RestClient client = new RestClient(authDetails.endpoint);
+            RestRequest request = new RestRequest("", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Bearer " + authDetails.token);
+
+            Dictionary<string, string> json = new Dictionary<string, string> { ["channel"] = authDetails.channelId, ["text"] = notification.text };
+            string body = JsonSerializer.Serialize(json, new JsonSerializerOptions { WriteIndented = true });
+            request.AddJsonBody(body);
+            RestResponse response = client.Execute(request);
+            Console.WriteLine(response.StatusCode);
         }
     }
 }
