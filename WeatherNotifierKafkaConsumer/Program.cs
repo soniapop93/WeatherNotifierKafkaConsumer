@@ -1,4 +1,7 @@
-﻿public class Program
+﻿using WeatherNotifierKafkaConsumer.Kafka;
+using WeatherNotifierKafkaConsumer.Slack;
+
+public class Program
 {
     public static async Task Main(string[] args)
     {
@@ -12,11 +15,20 @@
 
             Kafka Producer:
                 - consumes data from Producer WeatherNotifierKafkaProducer
-                - sends a message that the weather changed
+                - sends a slack message that the precipitation probability changed
 
            =============================================================
            =============================================================
         */
+        
+        
+        AuthDetails authDetails = new AuthDetails();
+        authDetails.channelId = "";
+        authDetails.endpoint = "https://slack.com/api/chat.postMessage";
+        authDetails.token = "m";
 
+        Consumer consumer = new Consumer(authDetails);
+
+        consumer.getMessages();
     }
 }
