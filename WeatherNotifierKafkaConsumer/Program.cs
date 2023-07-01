@@ -13,7 +13,7 @@ public class Program
               https://api.techniknews.net/ipgeo/ + ipAddress
               https://api.open-meteo.com/
 
-            Kafka Producer:
+            Kafka Consumer:
                 - consumes data from Producer WeatherNotifierKafkaProducer
                 - sends a slack message that the precipitation probability changed
 
@@ -25,7 +25,7 @@ public class Program
         AuthDetails authDetails = new AuthDetails();
         authDetails.channelId = "";
         authDetails.endpoint = "https://slack.com/api/chat.postMessage";
-        authDetails.token = "m";
+        authDetails.token = "";
 
         Consumer consumer = new Consumer(authDetails);
 
