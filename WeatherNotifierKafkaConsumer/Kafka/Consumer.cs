@@ -5,20 +5,23 @@ namespace WeatherNotifierKafkaConsumer.Kafka
 {
     public class Consumer
     {
-        ConsumerConfig config = new ConsumerConfig
-        {
-            BootstrapServers = "localhost:9092",
-            GroupId = "Weather-Consumer",
-            AutoOffsetReset = AutoOffsetReset.Earliest
-        };
         private IConsumer<Null, string> consumer;
-        private readonly List<string> topicNames = new List<string>() { "weather" };
+        private List<string> topicNames;
         CancellationToken cancellationToken = new CancellationToken();
         Requests slackRequests;
-        public Consumer(AuthDetails authDetails)
+
+        public Consumer(AuthDetails authDetails, Config kafkaConfig)
         {
+            ConsumerConfig config = new ConsumerConfig
+            {
+                BootstrapServers = kafkaConfig.server,
+                GroupId = kafkaConfig.groupId,
+                AutoOffsetReset = AutoOffsetReset.Earliest
+            };
+
             consumer = new ConsumerBuilder<Null, string>(config).Build();
             slackRequests = new Requests(authDetails);
+            topicNames = new List<string>() { kafkaConfig.topic };
         }
 
         public void getMessages()

@@ -1,4 +1,5 @@
-﻿using WeatherNotifierKafkaConsumer.Kafka;
+﻿using System.Text.Json;
+using WeatherNotifierKafkaConsumer.Kafka;
 using WeatherNotifierKafkaConsumer.Slack;
 
 public class Program
@@ -20,14 +21,15 @@ public class Program
            =============================================================
            =============================================================
         */
-        
-        
-        AuthDetails authDetails = new AuthDetails();
-        authDetails.channelId = "";
-        authDetails.endpoint = "https://slack.com/api/chat.postMessage";
-        authDetails.token = "";
 
-        Consumer consumer = new Consumer(authDetails);
+        Config kafkaConfig = JsonSerializer.Deserialize<Config>(File.ReadAllText("kafka_config.json"));
+
+        AuthDetails authDetails = new AuthDetails();
+        authDetails.channelId = kafkaConfig.channelId;
+        authDetails.endpoint = "https://slack.com/api/chat.postMessage";
+        authDetails.token = kafkaConfig.token;
+
+        Consumer consumer = new Consumer(authDetails, kafkaConfig);
 
         consumer.getMessages();
     }
